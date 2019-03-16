@@ -2,7 +2,8 @@
  * DB helper
  */
 const mongoose = require('mongoose');
-const CONSTANTS = require('./constants')
+const CONSTANTS = require('./constants');
+
 var dbConnection = async () => {
     // get reference to database
     var db = mongoose.connection;

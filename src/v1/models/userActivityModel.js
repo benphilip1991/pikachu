@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 var schema = mongoose.Schema
 // define Schema
 var userActivitySchema = new schema({
+    userId: String,
     deviceId: String,
-    beaconId: String,
     timestamp: Date
 });
 

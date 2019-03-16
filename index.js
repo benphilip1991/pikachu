@@ -1,11 +1,10 @@
-var express     = require('express'),
-    articles    = require('./src/api/v1/usersactivity/useractivity.js');
-var bodyParser  = require('body-parser');
-var cors        = require('cors');
-var util        = require('util');
-var path        = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const util = require('util');
+const path = require('path');
 
-var dbHelper    = require('./src/helper/db-helper.js');
+const routes = require('./src/v1/routes');
 
 // Initialize express
 var app = express();
@@ -16,11 +15,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ exended: false }));
 
+app.get('/', (req, res) => { res.send('Application online')})
+
 // Route to useractivity API
-app.use('/api/v1/useractivity', articles);
+app.use('/api/v1', routes);
 
 // Initialize database
-dbHelper.initDb();
+//dbHelper.initDb();
 
 // Launch server
 var server = app.listen(4000, () => {

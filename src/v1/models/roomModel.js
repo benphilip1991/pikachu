@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema
+
 // define Schema
 var roomSchema = new schema({
-    room_id: String,
-    beacon_id: String
+    roomId: String,
+    deviceId: String
 });
 
 // compile schema to model
