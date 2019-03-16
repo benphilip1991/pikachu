@@ -4,7 +4,8 @@ var schema = mongoose.Schema
 var userActivitySchema = new schema({
     userId: String,
     deviceId: String,
-    timestamp: Date
+    timestamp: Date,
+    deleteFlag: Boolean
 });
 
 // compile schema to model

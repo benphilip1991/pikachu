@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const CONSTANTS = require('./constants');
 const model = require('../models');
 mongoose.Promise = global.Promise;
+
+//Connection to DB
 var dbConnection = async () => {
     // get reference to database
     var db = mongoose.connection;
@@ -19,10 +21,13 @@ var dbConnection = async () => {
     });
 
 }
+
+//Close the connection
 var closeConnection = () => {
     mongoose.Connection.close();
 }
 
+//Fetch Room data
 var getRoomData = () => {
     var devices = [];
     model.roomModel.find({})
@@ -38,6 +43,16 @@ var getRoomData = () => {
             return error;
         })
 }
+
+
+//Insert in room data
+/* 
+@params data 
+data = {
+    roomId,
+    deviceId
+}
+*/
 var insertDataToRoom = (data) => {
     const roomModel = model.roomModel;
     const room = new roomModel({
@@ -50,6 +65,8 @@ var insertDataToRoom = (data) => {
         else return CONSTANTS.HTTP_CREATED;
     });
 }
+
+//Delete data from room
 var deleteDataFromRoom = (deviceId) => {
     model.roomModel.deleteOne({ deviceId: deviceId })
         .then(res => {
@@ -60,6 +77,7 @@ var deleteDataFromRoom = (deviceId) => {
         })
 }
 
+//Fetch from user activity
 var getuserActvity = () => {
     var userActivity = [];
     model.userActivityModel.find({})
@@ -75,6 +93,16 @@ var getuserActvity = () => {
             return error;
         })
 }
+
+//Insert to user activity
+
+/* 
+@params data 
+data = {
+    userId,
+    deviceId
+}
+*/
 var insertDataToUserActivity = (data) => {
     const userActivityModel = model.userActivityModel;
     const userActivity = new userActivityModel({
@@ -87,6 +115,8 @@ var insertDataToUserActivity = (data) => {
         else return CONSTANTS.HTTP_CREATED;
     });
 }
+
+//Delete from user activity
 var deleteDataFromUserActivity = (userId) => {
     model.userActivityModel.deleteOne({ userId: userId })
         .then(res => {
@@ -96,6 +126,68 @@ var deleteDataFromUserActivity = (userId) => {
             return error;
         })
 }
+
+//Update the user Activity for soft delete
+
+/* 
+    @params data
+
+    data ={
+    userId: String,
+    deviceId: String,
+    timestamp: Date,
+    deleteFlag: Boolean
+    }
+*/
+var updateUserActivity = (data) => {
+    model.userActivityModel.updateOne({ userId: data.userId }, { deleteFlag: data.deleteFlag }, { runValidators: true })
+        .then(() => {
+            return CONSTANTS.HTTP_OK;
+        })
+        .catch(err => {
+            return error
+        })
+}
+
+//create user in DB
+var createUser = (data) => {
+    var userModel = model.userModel;
+    var user = new userModel({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        userId: data.userId
+    })
+    user.save(function (err) {
+        if (err) return CONSTANTS.HTTP_INTERNAL_ERROR;
+        else return CONSTANTS.HTTP_CREATED;
+    });
+
+}
+
+
+//Update the user Activity for soft delete
+
+/* 
+    @params data
+
+    data ={
+    firstName: String,
+    lastName: String,
+    userId: String,
+    deleteFlag: Boolean
+    }
+*/
+var updateUser = (data) => {
+    model.userModel.updateOne({ userId: data.userId }, { deleteFlag: data.deleteFlag }, { runValidators: true })
+        .then(() => {
+            return CONSTANTS.HTTP_OK;
+        })
+        .catch(err => {
+            return error
+        })
+}
+
+
 var DBHELPER = {
     dbConnection: dbConnection,
     closeConnection: closeConnection,
@@ -104,7 +196,10 @@ var DBHELPER = {
     deleteDataFromRoom: deleteDataFromRoom,
     insertDataToUserActivity: insertDataToUserActivity,
     deleteDataFromUserActivity: deleteDataFromUserActivity,
-    getuserActvity: getuserActvity
+    updateUserActivity: updateUserActivity,
+    getuserActvity: getuserActvity,
+    createUser: createUser,
+    updateUser: updateUser
 }
 
 module.exports = DBHELPER
