@@ -47,8 +47,7 @@ const createUserActivity = async (req, res, next) => {
  * @param {*} next 
  */
 const deleteUserActivity = async (req, res, next) => {
-    const { userId } = req.body;
-
+    const userId = req.params.userId;
     try {
         var results = await services.UserActivityService.userExitsHotspot(userId);
         utils.sendResponseOk(res, 'OK', results)

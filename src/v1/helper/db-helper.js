@@ -2,7 +2,7 @@
  * DB helper
  */
 const mongoose = require('mongoose');
-const CONSTANTS = require('./constants');
+const CONSTANTS = require('../config/constants');
 const model = require('../models');
 mongoose.Promise = global.Promise;
 
@@ -13,11 +13,11 @@ var dbConnection = async () => {
     console.log('In db connection');
 
     // make a connection
-    await mongoose.connection.openUri(CONSTANTS.DB_URL);
-    db.on('error', console.error.bind(console, 'connection error:' + CONSTANTS.HTTP_INTERNAL_ERROR));
+    await mongoose.connection.openUri(CONSTANTS.DB_CONSTANTS.DB_URL);
+    db.on('error', console.error.bind(console, 'connection error:' + CONSTANTS.HTTP_CONSTANTS.HTTP_INTERNAL_ERROR));
 
     db.once('open', function () {
-        console.log("Connection Successful!" + CONSTANTS.HTTP_OK);
+        console.log("Connection Successful!" + CONSTANTS.HTTP_CONSTANTS.HTTP_OK);
     });
 
 }
@@ -56,10 +56,10 @@ var insertDataToRoom = async (roomId, deviceId) => {
     });
     console.log('[ROOM]', JSON.stringify(room.deviceId));
     await room.save(function (err) {
-        if (err) statusCode = CONSTANTS.HTTP_INTERNAL_ERROR;
+        if (err) statusCode = CONSTANTS.HTTP_CONSTANTS.HTTP_INTERNAL_ERROR;
         else {
             console.log('[Created]')
-            statusCode = CONSTANTS.HTTP_CREATED;
+            statusCode = CONSTANTS.HTTP_CONSTANTS.HTTP_CREATED;
         }
     });
 
@@ -70,7 +70,7 @@ var insertDataToRoom = async (roomId, deviceId) => {
 var deleteDataFromRoom = (deviceId) => {
     model.roomModel.deleteOne({ deviceId: deviceId })
         .then(res => {
-            return CONSTANTS.HTTP_OK;
+            return CONSTANTS.HTTP_CONSTANTS.HTTP_OK;
         })
         .catch(error => {
             throw new Error(error);
@@ -78,7 +78,7 @@ var deleteDataFromRoom = (deviceId) => {
 }
 
 //Fetch from user activity
-var getuserActvity = () => {
+var getAlluserActvity = () => {
     var userActivity = model.userActivityModel.find({})
         .then(res => {
             return res;
@@ -107,8 +107,8 @@ var insertDataToUserActivity = (data) => {
         deleteFlag: false
     })
     userActivity.save(function (err) {
-        if (err) return CONSTANTS.HTTP_INTERNAL_ERROR;
-        else return CONSTANTS.HTTP_CREATED;
+        if (err) return CONSTANTS.HTTP_CONSTANTS.HTTP_INTERNAL_ERROR;
+        else return CONSTANTS.HTTP_CONSTANTS.HTTP_CREATED;
     });
 }
 
@@ -116,7 +116,7 @@ var insertDataToUserActivity = (data) => {
 var deleteDataFromUserActivity = (userId) => {
     model.userActivityModel.deleteOne({ userId: userId })
         .then(res => {
-            return CONSTANTS.HTTP_OK;
+            return CONSTANTS.HTTP_CONSTANTS.HTTP_OK;
         })
         .catch(error => {
             return error;
@@ -135,16 +135,28 @@ var deleteDataFromUserActivity = (userId) => {
     deleteFlag: Boolean
     }
 */
-var updateUserActivity = (data) => {
-    model.userActivityModel.updateOne({ userId: data.userId }, { deleteFlag: true }, { runValidators: true })
+var updateUserActivity = (userId) => {
+    console.log('[UserId]', userId);
+    model.userActivityModel.findOneAndUpdate({ userId: userId, deleteFlag: false }, { deleteFlag: true })
         .then(() => {
-            return CONSTANTS.HTTP_OK;
+            return CONSTANTS.HTTP_CONSTANTS.HTTP_OK;
         })
         .catch(err => {
             return error
         })
 }
 
+
+var getUserActivity = (userId) => {
+    var users = model.userModel.find({ userId: userId }).then(res => {
+        return res;
+    })
+        .catch(error => {
+            return error
+        })
+
+    return users;
+}
 //Get all users
 var getAllUsers = () => {
     var users = model.userModel.find({}).then(res => {
@@ -185,7 +197,7 @@ var createUser = (data) => {
             return res[0]._id;
         else {
             user.save(function (err) {
-                if (err) return CONSTANTS.HTTP_INTERNAL_ERROR;
+                if (err) return CONSTANTS.HTTP_CONSTANTS.HTTP_INTERNAL_ERROR;
                 else {
                     return getUser(data.userId);
                 };
@@ -239,7 +251,8 @@ var DBHELPER = {
     insertDataToUserActivity: insertDataToUserActivity,
     deleteDataFromUserActivity: deleteDataFromUserActivity,
     updateUserActivity: updateUserActivity,
-    getuserActvity: getuserActvity,
+    getUserActivity: getUserActivity,
+    getAlluserActvity: getAlluserActvity,
     getAllUsers: getAllUsers,
     createUser: createUser,
     updateUser: updateUser

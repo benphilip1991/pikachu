@@ -10,6 +10,6 @@ const controller = require('../controller');
  */
 router.get('/useractivity', controller.UserActivityController.getUserActivity)
 router.post('/useractivity', controller.UserActivityController.createUserActivity);
-router.delete('/useractivity', controller.UserActivityController.deleteUserActivity);
+router.delete('/useractivity/:userId', controller.UserActivityController.deleteUserActivity);
 
 module.exports = router;

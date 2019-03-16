@@ -1,6 +1,5 @@
 'use strict';
 
-const uuidv1 = require('uuid/v1');
 const dbHelper = require('../helper')
 var user = [{
     _id: "1234",
@@ -26,10 +25,10 @@ const getAllUsers = async () => {
  * @param {*} firstName 
  * @param {*} lastName 
  */
-const createUser = async (firstName, lastName) => {
+const createUser = async (firstName, lastName, userId) => {
     try {
         var newUser = {
-            userId: uuidv1(),
+            userId: userId,
             firstName: firstName,
             lastName: lastName,
             deleted: false

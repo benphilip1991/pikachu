@@ -7,7 +7,7 @@ var useractivity = [{
 }]
 
 const getAllUsers = async () => {
-    var useractivity = await dbhelper.DbHelper.getuserActvity()
+    var useractivity = await dbhelper.DbHelper.getAlluserActvity()
     return useractivity
 }
 
@@ -37,8 +37,9 @@ const userEntersHotspot = async (userId, deviceId) => {
  * @param {*} deviceId 
  */
 const userExitsHotspot = async (userId) => {
+    console.log('[userID]', userId)
     try {
-        var result = await dbhelper.DbHelper.updateUser(userId);
+        var result = await dbhelper.DbHelper.updateUserActivity(userId);
         return result;
 
     } catch (e) {

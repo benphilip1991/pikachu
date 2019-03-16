@@ -29,11 +29,12 @@ const getAllUser = async (req, res, next) => {
  * @param {*} next 
  */
 const createUser = async (req, res, next) => {
-    const { firstName, lastName } = req.body;
+    const { firstName, lastName, userId } = req.body;
     try {
         console.log("Creating User");
-        let user = service.UserService.createUser(firstName, lastName);
-        utils.sendResponseCreated(res, 'OK', user)
+        let user = service.UserService.createUser(firstName, lastName, userId);
+        utils.sendResponseCreated(res, 'OK', user);
+        next();
     } catch (e) {
         utils.sendResponseServerError(res, 'Internal Server Error');
     }
@@ -52,10 +53,9 @@ const softDeleteUser = async (req, res, next) => {
     try {
         console.log("Deleting User");
         var results = await service.UserService.softDeleteUser(userId);
-        //res.sendStatus(HTTP_CONSTANTS.HTTP_OK);
         utils.sendResponseOk(res, 'OK', results)
+        next();
     } catch (e) {
-        //res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
         utils.sendResponseServerError(res, 'Internal Server Error')
     }
 }
