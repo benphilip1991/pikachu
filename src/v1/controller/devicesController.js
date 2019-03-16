@@ -2,6 +2,7 @@
 
 const HTTP_CONSTANTS = require('../helper/constants');
 const services = require('../services');
+const utils = require('../utils/utils');
 
 /**
  * GET All devices controller
@@ -10,12 +11,12 @@ const getAllDevices = async (req, res, next) => {
     try {
         console.log("Inside Get all devices");
         let devicesList = await services.DevicesService.getAllDevices();
-        res.status(HTTP_CONSTANTS.HTTP_OK);
-        res.send(devicesList);
+        console.log('[DEVICE LIST]', devicesList);
+        utils.sendResponseOk(res, 'OK', devicesList);
         next();
     } catch (e) {
         console.log(`Get error : ${e.message}`);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
+        utils.sendResponseServerError(res, 'Internal Server Error');
     }
 }
 
@@ -32,12 +33,12 @@ const createDeviceMap = async (req, res, next) => {
     try {
         console.log("Inside Create new device");
         console.log(`Request body : ${JSON.stringify(req.body)}`);
-        await services.DevicesService.createDeviceMap(roomId, deviceId);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_CREATED)
+        var results = await services.DevicesService.createDeviceMap(roomId, deviceId);
+        utils.sendResponseOk(res, 'Created', results)
         next();
     } catch (e) {
         console.log(`Create map error : ${e.message}`);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error)
+        utils.sendResponseServerError(res, 'Internal Server Error')
     }
 }
 
@@ -48,15 +49,16 @@ const createDeviceMap = async (req, res, next) => {
  * @param {*} next 
  */
 const deleteDevice = async (req, res, next) => {
-    const { deviceId } = req.body;
+    const deviceId = req.params.deviceId;
 
     console.log("Inside Delete Device");
     try {
-        await services.DevicesService.deleteDevice(deviceId);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_OK);
+        var results = await services.DevicesService.deleteDevice(deviceId);
+
+        utils.sendResponseOk(res, 'OK', results);
     } catch (e) {
         console.log(`Device deletion failed : ${e.message}`);
-        res.send(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
+        utils.sendResponseServerError(res, 'Internal Server Error');
     }
 }
 

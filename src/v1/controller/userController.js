@@ -2,7 +2,7 @@
 
 const HTTP_CONSTANTS = require('../helper/constants');
 const service = require('../services');
-
+const utils = require('../utils/utils')
 /**
  * Get all registered users
  * @param {*} req 
@@ -12,12 +12,13 @@ const service = require('../services');
 const getAllUser = async (req, res, next) => {
     try {
         console.log("Getting all users");
-        let users = service.UserService.getAllUsers();
-        res.status(HTTP_CONSTANTS.HTTP_OK);
-        res.send(users);
+        let users = await service.UserService.getAllUsers();
+        // res.status(HTTP_CONSTANTS.HTTP_OK);
+        // res.send(users);
+        utils.sendResponseOk(res, 'OK', users);
         next();
     } catch (e) {
-        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
+        utils.sendResponseServerError(res, 'Internal Server Error');
     }
 }
 
@@ -29,13 +30,12 @@ const getAllUser = async (req, res, next) => {
  */
 const createUser = async (req, res, next) => {
     const { firstName, lastName } = req.body;
-
     try {
         console.log("Creating User");
-        service.UserService.createUser(firstName, lastName);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_CREATED);
+        let user = service.UserService.createUser(firstName, lastName);
+        utils.sendResponseCreated(res, 'OK', user)
     } catch (e) {
-        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
+        utils.sendResponseServerError(res, 'Internal Server Error');
     }
 }
 
@@ -51,10 +51,12 @@ const softDeleteUser = async (req, res, next) => {
 
     try {
         console.log("Deleting User");
-        service.UserService.softDeleteUser(userId);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_OK);
+        var results = await service.UserService.softDeleteUser(userId);
+        //res.sendStatus(HTTP_CONSTANTS.HTTP_OK);
+        utils.sendResponseOk(res, 'OK', results)
     } catch (e) {
-        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
+        //res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
+        utils.sendResponseServerError(res, 'Internal Server Error')
     }
 }
 

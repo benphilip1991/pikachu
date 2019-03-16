@@ -2,7 +2,7 @@
 
 const HTTP_CONSTANTS = require('../helper/constants');
 const services = require('../services');
-
+const utils = require('../utils/utils')
 /**
  * Get all users activity - test API
  * 
@@ -13,11 +13,10 @@ const services = require('../services');
 const getUserActivity = async (req, res, next) => {
     try {
         let activityList = await services.UserActivityService.getAllUsers();
-        res.status(HTTP_CONSTANTS.HTTP_OK);
-        res.send(activityList);
+        utils.sendResponseOk(res, 'OK', activityList)
     } catch (e) {
         console.log(`Get failed`);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error)
+        utils.sendResponseServerError(res, 'Internal Server Error');
     }
 }
 
@@ -32,14 +31,12 @@ const createUserActivity = async (req, res, next) => {
 
     try {
         console.log("Inside create user activity");
-        await services.UserActivityService.userEntersHotspot(userId, deviceId);
-
-        res.status(HTTP_CONSTANTS.HTTP_CREATED);
-        res.send(`User ${userId} is near ${deviceId}`)
+        var results = await services.UserActivityService.userEntersHotspot(userId, deviceId);
+        utils.sendResponseOk(res, 'OK', results);
         next();
     } catch (e) {
-        console.log(`Create User Activity failed : ${e.message}`);
-        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
+        utils.sendResponseServerError(res, 'Internal Server Error')
+
     }
 }
 
@@ -53,9 +50,8 @@ const deleteUserActivity = async (req, res, next) => {
     const { userId } = req.body;
 
     try {
-        await services.UserActivityService.userExitsHotspot(userId);
-        res.status(HTTP_CONSTANTS.HTTP_OK);
-        res.send(`${userId} cleared the area`)
+        var results = await services.UserActivityService.userExitsHotspot(userId);
+        utils.sendResponseOk(res, 'OK', results)
     } catch (e) {
         res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
     }

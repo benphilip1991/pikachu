@@ -1,21 +1,23 @@
 'use strict';
 
-//const dbhelper = require('../helper');
+const dbhelper = require('../helper');
 
-var devicesList = [{
-    deviceId: "1234",
-    roomId: "Room1"
-},
-{
-    deviceId: "5678",
-    roomId: "Room2"
-}]
+// var devicesList = [{
+//     deviceId: "1234",
+//     roomId: "Room1"
+// },
+// {
+//     deviceId: "5678",
+//     roomId: "Room2"
+// }]
 
 /**
  * Get all devices and room map
  */
 const getAllDevices = async () => {
     try {
+        var devicesList = await dbhelper.DbHelper.getRoomData();
+        console.log('[SERVICES]', devicesList)
         return devicesList;
     } catch (e) {
         throw new Error(e);
@@ -28,10 +30,8 @@ const getAllDevices = async () => {
  * @param {*} deviceId 
  */
 const createDeviceMap = async (roomId, deviceId) => {
-    devicesList.push({
-        deviceId: deviceId,
-        roomId: roomId
-    })
+    var result = dbhelper.DbHelper.insertDataToRoom(roomId, deviceId);
+    return result;
 }
 
 /**
@@ -41,13 +41,10 @@ const createDeviceMap = async (roomId, deviceId) => {
 const deleteDevice = async (deviceId) => {
 
     try {
-        let deviceIndex = devicesList.map((e) => {
-            return e.deviceId
-        }).indexOf(deviceId);
-
-        devicesList.splice(deviceIndex, 1);
+        var result = dbhelper.DbHelper.deleteDataFromRoom(deviceId);
+        return result;
     } catch (e) {
-
+        throw new Error(e)
     }
 }
 

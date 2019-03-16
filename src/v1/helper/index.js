@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = {
-    Constants: constants,
-    DbHelper: db-helper
+    Constants: require('./constants'),
+    DbHelper: require('./db-helper')
 }

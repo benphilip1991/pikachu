@@ -1,5 +1,5 @@
 'use strict';
-
+const dbhelper = require('../helper')
 var useractivity = [{
     userId: "user1",
     deviceId: "1234",
@@ -7,6 +7,7 @@ var useractivity = [{
 }]
 
 const getAllUsers = async () => {
+    var useractivity = await dbhelper.DbHelper.getuserActvity()
     return useractivity
 }
 
@@ -22,7 +23,8 @@ const userEntersHotspot = async (userId, deviceId) => {
             deviceId: deviceId,
             timestamp: new Date()
         }
-        useractivity.push(userEntry);
+        var results = await dbhelper.DbHelper.insertDataToUserActivity(userEntry);
+        return results;
 
     } catch (e) {
         console.log(`User activity enter hotspot failed : ${e.message}`);
@@ -36,11 +38,9 @@ const userEntersHotspot = async (userId, deviceId) => {
  */
 const userExitsHotspot = async (userId) => {
     try {
-        let userIdIndex = useractivity.map((e) => {
-            return e.userId
-        }).indexOf(userId);
+        var result = await dbhelper.DbHelper.updateUser(userId);
+        return result;
 
-        useractivity.splice(userIdIndex);
     } catch (e) {
         console.log(`Exit hotspot failed : ${e.message}`);
     }

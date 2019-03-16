@@ -29,19 +29,13 @@ var closeConnection = () => {
 
 //Fetch Room data
 var getRoomData = () => {
-    var devices = [];
-    model.roomModel.find({})
-        .then(res => {
-            res.forEach(element => {
-                devices.push(element)
-            })
-        })
-        .then(() => {
-            return devices;
-        })
-        .catch(error => {
-            return error;
-        })
+    var deviceArray = model.roomModel.find({}).then((res) => {
+        return res
+    }).catch((error) => {
+        throw new Error(error);
+    })
+
+    return deviceArray;
 }
 
 
@@ -53,17 +47,23 @@ data = {
     deviceId
 }
 */
-var insertDataToRoom = (data) => {
+var insertDataToRoom = async (roomId, deviceId) => {
+    var statusCode;
     const roomModel = model.roomModel;
     const room = new roomModel({
-        roomId: data.roomId,
-        deviceId: data.deviceId
-    })
-
-    room.save(function (err) {
-        if (err) return CONSTANTS.HTTP_INTERNAL_ERROR;
-        else return CONSTANTS.HTTP_CREATED;
+        roomId: roomId,
+        deviceId: deviceId
     });
+    console.log('[ROOM]', JSON.stringify(room.deviceId));
+    await room.save(function (err) {
+        if (err) statusCode = CONSTANTS.HTTP_INTERNAL_ERROR;
+        else {
+            console.log('[Created]')
+            statusCode = CONSTANTS.HTTP_CREATED;
+        }
+    });
+
+    return statusCode;
 }
 
 //Delete data from room
@@ -73,25 +73,20 @@ var deleteDataFromRoom = (deviceId) => {
             return CONSTANTS.HTTP_OK;
         })
         .catch(error => {
-            return error;
+            throw new Error(error);
         })
 }
 
 //Fetch from user activity
 var getuserActvity = () => {
-    var userActivity = [];
-    model.userActivityModel.find({})
+    var userActivity = model.userActivityModel.find({})
         .then(res => {
-            res.forEach(element => {
-                userActivity.push(element)
-            })
-        })
-        .then(() => {
-            return userActivity
+            return res;
         })
         .catch(error => {
             return error;
         })
+    return userActivity;
 }
 
 //Insert to user activity
@@ -108,7 +103,8 @@ var insertDataToUserActivity = (data) => {
     const userActivity = new userActivityModel({
         userId: data.userId,
         deviceId: data.deviceId,
-        timestamp: data.timestamp
+        timestamp: data.timestamp,
+        deleteFlag: false
     })
     userActivity.save(function (err) {
         if (err) return CONSTANTS.HTTP_INTERNAL_ERROR;
@@ -140,7 +136,7 @@ var deleteDataFromUserActivity = (userId) => {
     }
 */
 var updateUserActivity = (data) => {
-    model.userActivityModel.updateOne({ userId: data.userId }, { deleteFlag: data.deleteFlag }, { runValidators: true })
+    model.userActivityModel.updateOne({ userId: data.userId }, { deleteFlag: true }, { runValidators: true })
         .then(() => {
             return CONSTANTS.HTTP_OK;
         })
@@ -149,18 +145,58 @@ var updateUserActivity = (data) => {
         })
 }
 
+//Get all users
+var getAllUsers = () => {
+    var users = model.userModel.find({}).then(res => {
+        return res;
+    })
+        .catch(error => {
+            return error
+        })
+
+    return users;
+}
+
+var getUser = (userId) => {
+    var _id = model.userModel.find({ userId: userId }).then(res => {
+        return res[0]._id;
+    })
+        .catch(error => {
+            return error
+        })
+
+    return _id;
+}
+
+
 //create user in DB
 var createUser = (data) => {
+    console.log('[DB]', data)
+    var _id;
     var userModel = model.userModel;
     var user = new userModel({
         firstName: data.firstName,
         lastName: data.lastName,
-        userId: data.userId
+        userId: data.userId,
+        deleteFlag: false
     })
-    user.save(function (err) {
-        if (err) return CONSTANTS.HTTP_INTERNAL_ERROR;
-        else return CONSTANTS.HTTP_CREATED;
-    });
+    _id = userModel.find({ userId: data.userId }).then(res => {
+        if (res.length > 0)
+            return res[0]._id;
+        else {
+            user.save(function (err) {
+                if (err) return CONSTANTS.HTTP_INTERNAL_ERROR;
+                else {
+                    return getUser(data.userId);
+                };
+            });
+        }
+    })
+        .catch(error => {
+            return error;
+        })
+
+    return _id;
 
 }
 
@@ -177,14 +213,20 @@ var createUser = (data) => {
     deleteFlag: Boolean
     }
 */
-var updateUser = (data) => {
-    model.userModel.updateOne({ userId: data.userId }, { deleteFlag: data.deleteFlag }, { runValidators: true })
-        .then(() => {
-            return CONSTANTS.HTTP_OK;
+var updateUser = (userId) => {
+    var result = model.userModel.find({ userId: userId }).then(() => {
+        model.userModel.updateOne({ userId: userId }, { deleteFlag: true }, { runValidators: true })
+            .then((res) => {
+                return res;
+            })
+            .catch(error => {
+                return error
+            })
+    })
+        .catch(error => {
+            return error;
         })
-        .catch(err => {
-            return error
-        })
+    return result;
 }
 
 
@@ -198,6 +240,7 @@ var DBHELPER = {
     deleteDataFromUserActivity: deleteDataFromUserActivity,
     updateUserActivity: updateUserActivity,
     getuserActvity: getuserActvity,
+    getAllUsers: getAllUsers,
     createUser: createUser,
     updateUser: updateUser
 }

@@ -4,7 +4,7 @@ const cors = require('cors');
 const util = require('util');
 const path = require('path');
 const swaggerJSDoc = require('swagger-jsdoc');
-
+const dbHelper = require('./src/v1/helper')
 const routes = require('./src/v1/routes');
 
 // Initialize express
@@ -39,13 +39,13 @@ app.get('/swagger.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
 })
-app.get('/', (req, res) => { res.send('Application online')})
+app.get('/', (req, res) => { res.send('Application online') })
 
 // Route to useractivity API
 app.use('/api/v1', routes);
 
 // Initialize database
-//dbHelper.initDb();
+dbHelper.DbHelper.dbConnection();
 
 // Launch server
 var server = app.listen(4000, () => {

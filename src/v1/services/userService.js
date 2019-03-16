@@ -1,7 +1,7 @@
 'use strict';
 
 const uuidv1 = require('uuid/v1');
-
+const dbHelper = require('../helper')
 var user = [{
     _id: "1234",
     firstName: "Sanchit",
@@ -14,7 +14,8 @@ var user = [{
  */
 const getAllUsers = async () => {
     try {
-        return user;
+        var users = await dbHelper.DbHelper.getAllUsers();
+        return users;
     } catch (e) {
         throw new Error(e);
     }
@@ -34,8 +35,9 @@ const createUser = async (firstName, lastName) => {
             deleted: false
         }
 
-        user.push()
-    } catch(e) {
+        var result = await dbHelper.DbHelper.createUser(newUser)
+        return result;
+    } catch (e) {
         throw new Error(e);
     }
 }
@@ -46,8 +48,10 @@ const createUser = async (firstName, lastName) => {
  */
 const softDeleteUser = async (userId) => {
     try {
-        ;
-    } catch(e) {
+        var results = dbHelper.DbHelper.updateUser(userId);
+        console.log('[USERS]', results);
+        return results;
+    } catch (e) {
         throw new Error(e)
     }
 }

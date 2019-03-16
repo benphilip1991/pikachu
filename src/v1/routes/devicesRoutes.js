@@ -10,6 +10,6 @@ const controller = require('../controller');
  */
 router.get('/devices', controller.DevicesController.getAllDevices);
 router.post('/devices', controller.DevicesController.createDeviceMap);
-router.delete('/devices', controller.DevicesController.deleteDevice);
+router.delete('/devices/:deviceId', controller.DevicesController.deleteDevice);
 
 module.exports = router;

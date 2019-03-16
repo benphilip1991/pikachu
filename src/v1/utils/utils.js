@@ -53,7 +53,7 @@ const sendResponseServerError = (response, message) => {
  * @param {*} response 
  * @param {*} message 
  */
-const sendResponseServerError = (response, message) => {
+const sendResponseBadRequest = (response, message) => {
     var message = message || CONFIG.appConstants.DEFAULT_MESSAGES.DEFAULT_BAD_REQUEST_MESSAGE;
 
     response.status(CONFIG.appConstants.HTTP_CONSTANTS.HTTP_BAD_REQUEST);
@@ -61,7 +61,8 @@ const sendResponseServerError = (response, message) => {
 }
 
 module.exports = {
-    sendResponseOk,
-    sendResponseCreated,
-    sendResponseServerError
+    sendResponseOk: sendResponseOk,
+    sendResponseCreated: sendResponseCreated,
+    sendResponseServerError: sendResponseServerError,
+    sendResponseBadRequest: sendResponseBadRequest
 }
