@@ -1,14 +1,18 @@
 'use strict';
 const dbhelper = require('../helper')
-var useractivity = [{
-    userId: "user1",
-    deviceId: "1234",
-    timestamp: new Date()
-}]
 
-const getAllUsers = async () => {
+const getAllUserActivity = async () => {
     var useractivity = await dbhelper.DbHelper.getAlluserActvity()
     return useractivity
+}
+
+/**
+ * Get single user activity
+ * @param {*} userId 
+ */
+const getUserActivity = async (userId) => {
+    var userActivity = await dbhelper.DbHelper.getUserActivity(userId);
+    return userActivity;
 }
 
 /**
@@ -48,7 +52,8 @@ const userExitsHotspot = async (userId) => {
 }
 
 module.exports = {
-    getAllUsers: getAllUsers,
+    getAllUserActivity: getAllUserActivity,
+    getUserActivity: getUserActivity,
     userEntersHotspot: userEntersHotspot,
     userExitsHotspot: userExitsHotspot
 }

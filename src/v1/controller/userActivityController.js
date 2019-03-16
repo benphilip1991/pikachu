@@ -13,10 +13,32 @@ const utils = require('../utils/utils')
  */
 const getUserActivity = async (req, res, next) => {
     try {
-        let activityList = await services.UserActivityService.getAllUsers();
+        let activityList = await services.UserActivityService.getAllUserActivity();
         utils.sendResponseOk(res, 'OK', activityList)
     } catch (e) {
         console.log(`Get failed`);
+        utils.sendResponseServerError(res, 'Internal Server Error');
+    }
+}
+
+/**
+ * Get single user activities
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+const getSingleUserActivity = async (req, res, next) => {
+    const userId = req.params.userId;
+
+    try {
+        if (!utils.isNullOrUndefined(userId)) {
+            let activityList = await services.UserActivityService.getUserActivity(userId);
+            utils.sendResponseOk(res, 'OK', activityList);
+        } else {
+            utils.sendResponseBadRequest(res, 'Bad Request');
+        }
+
+    } catch (e) {
         utils.sendResponseServerError(res, 'Internal Server Error');
     }
 }
@@ -63,6 +85,7 @@ const deleteUserActivity = async (req, res, next) => {
 
 module.exports = {
     getUserActivity: getUserActivity,
+    getSingleUserActivity: getSingleUserActivity,
     createUserActivity: createUserActivity,
     deleteUserActivity: deleteUserActivity
 }

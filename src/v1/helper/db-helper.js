@@ -146,9 +146,12 @@ var updateUserActivity = (userId) => {
         })
 }
 
-
+/**
+ * get a list of a single user's activity
+ * @param {*} userId 
+ */
 var getUserActivity = (userId) => {
-    var users = model.userModel.find({ userId: userId }).then(res => {
+    var users = model.userActivityModel.find({ userId: userId }).then(res => {
         return res;
     })
         .catch(error => {
@@ -157,6 +160,7 @@ var getUserActivity = (userId) => {
 
     return users;
 }
+
 //Get all users
 var getAllUsers = () => {
     var users = model.userModel.find({}).then(res => {
