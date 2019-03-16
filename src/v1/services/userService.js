@@ -1,12 +1,6 @@
 'use strict';
 
 const dbHelper = require('../helper')
-var user = [{
-    _id: "1234",
-    firstName: "Sanchit",
-    lastName: "Dang",
-    deleted: false
-}]
 
 /**
  * Get all users on the system

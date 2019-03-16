@@ -32,8 +32,15 @@ const createUser = async (req, res, next) => {
     const { firstName, lastName, userId } = req.body;
     try {
         console.log("Creating User");
-        let user = service.UserService.createUser(firstName, lastName, userId);
-        utils.sendResponseCreated(res, 'OK', user);
+        if (!utils.isNullOrUndefined(firstName) && !utils.isNullOrUndefined(lastName)
+            && !utils.isNullOrUndefined(userId)) {
+
+            let user = service.UserService.createUser(firstName, lastName, userId);
+            utils.sendResponseCreated(res, 'OK', user);
+        } else {
+            utils.sendResponseBadRequest(res, 'Bad Request');
+        }
+
         next();
     } catch (e) {
         utils.sendResponseServerError(res, 'Internal Server Error');

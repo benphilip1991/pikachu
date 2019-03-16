@@ -33,8 +33,13 @@ const createDeviceMap = async (req, res, next) => {
     try {
         console.log("Inside Create new device");
         console.log(`Request body : ${JSON.stringify(req.body)}`);
-        var results = await services.DevicesService.createDeviceMap(roomId, deviceId);
-        utils.sendResponseOk(res, 'Created', results)
+        if (!utils.isNullOrUndefined(roomId) && !utils.isNullOrUndefined(deviceId)) {
+            var results = await services.DevicesService.createDeviceMap(roomId, deviceId);
+            utils.sendResponseOk(res, 'Created', results)
+        } else {
+            utils.sendResponseBadRequest(res, 'Bad Request')
+        }
+
         next();
     } catch (e) {
         console.log(`Create map error : ${e.message}`);

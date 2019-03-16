@@ -3,6 +3,7 @@
 const HTTP_CONSTANTS = require('../helper/constants');
 const services = require('../services');
 const utils = require('../utils/utils')
+
 /**
  * Get all users activity - test API
  * 
@@ -31,8 +32,12 @@ const createUserActivity = async (req, res, next) => {
 
     try {
         console.log("Inside create user activity");
-        var results = await services.UserActivityService.userEntersHotspot(userId, deviceId);
-        utils.sendResponseOk(res, 'OK', results);
+        if (!utils.isNullOrUndefined(userId) && !utils.isNullOrUndefined(deviceId)) {
+            var results = await services.UserActivityService.userEntersHotspot(userId, deviceId);
+            utils.sendResponseOk(res, 'OK', results);
+        } else {
+            utils.sendResponseBadRequest(res, 'Bad Request');
+        }
         next();
     } catch (e) {
         utils.sendResponseServerError(res, 'Internal Server Error')

@@ -30,8 +30,12 @@ const getAllDevices = async () => {
  * @param {*} deviceId 
  */
 const createDeviceMap = async (roomId, deviceId) => {
-    var result = dbhelper.DbHelper.insertDataToRoom(roomId, deviceId);
-    return result;
+    try {
+        var result = dbhelper.DbHelper.insertDataToRoom(roomId, deviceId);
+        return result;
+    } catch (e) {
+        throw new Error(e);
+    }
 }
 
 /**
