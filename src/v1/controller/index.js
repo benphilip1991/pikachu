@@ -2,5 +2,6 @@
 
 module.exports = {
     UserActivityController: require('./userActivityController'),
-    DevicesController: require('./devicesController')
+    DevicesController: require('./devicesController'),
+    UserController: require('./userController')
 }

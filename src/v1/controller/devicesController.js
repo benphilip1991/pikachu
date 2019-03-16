@@ -1,5 +1,6 @@
 'use strict';
 
+const HTTP_CONSTANTS = require('../helper/constants');
 const services = require('../services');
 
 /**
@@ -9,12 +10,12 @@ const getAllDevices = async (req, res, next) => {
     try {
         console.log("Inside Get all devices");
         let devicesList = await services.DevicesService.getAllDevices();
-        res.status(200);
+        res.status(HTTP_CONSTANTS.HTTP_OK);
         res.send(devicesList);
         next();
     } catch (e) {
         console.log(`Get error : ${e.message}`);
-        res.sendStatus(500) && next(error);
+        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
     }
 }
 
@@ -32,11 +33,11 @@ const createDeviceMap = async (req, res, next) => {
         console.log("Inside Create new device");
         console.log(`Request body : ${JSON.stringify(req.body)}`);
         await services.DevicesService.createDeviceMap(roomId, deviceId);
-        res.sendStatus(201)
+        res.sendStatus(HTTP_CONSTANTS.HTTP_CREATED)
         next();
     } catch (e) {
         console.log(`Create map error : ${e.message}`);
-        res.sendStatus(500) && next(error)
+        res.sendStatus(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error)
     }
 }
 
@@ -52,10 +53,10 @@ const deleteDevice = async (req, res, next) => {
     console.log("Inside Delete Device");
     try {
         await services.DevicesService.deleteDevice(deviceId);
-        res.sendStatus(200);
+        res.sendStatus(HTTP_CONSTANTS.HTTP_OK);
     } catch (e) {
         console.log(`Device deletion failed : ${e.message}`);
-        res.send(500) && next(error);
+        res.send(HTTP_CONSTANTS.HTTP_INTERNAL_ERROR) && next(error);
     }
 }
 

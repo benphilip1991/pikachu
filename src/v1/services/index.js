@@ -2,5 +2,6 @@
 
 module.exports = {
     UserActivityService: require('./userActivityService'),
-    DevicesService: require('./devicesService')
+    DevicesService: require('./devicesService'),
+    UserService: require('./userService')
 }
